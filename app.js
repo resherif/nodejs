@@ -42,20 +42,53 @@ const customer = new Customer({
   name: "caleb",
   industry: "marketing",
 });
-customer.save();
+
 app.get("/", (req, res) => {
   res.send(customer);
 });
-app.get("/api/customers", (req, res) => {
-  res.send({ data: customers });
+app.get("/api/customers", async (req, res) => {
+  const result = await Customer.find();
+  res.send({ data: result });
 });
-app.post("/api/customers", (req, res) => {
-  const newCustomer = req.body;
-  customers.push(newCustomer);
-  console.log(customers);
-  res.status(201).send(newCustomer);
+app.get("/api/customers/:id",async (req,res)=>{
+   try{
+     const {id}=req.params;
+    const result=await Customer.findById(id);
+    if(!result){
+        res.status(404).json({message:"customer not found"});
+    }
+    res.json({data:result});
+   }catch(err){
+    res.status(500).json({message:err.message});
+   }
+})
+app.post("/api/customers", async(req, res) => {
+  const newCustomer =await new Customer(req.body);
+  await newCustomer.save();
+  console.log(newCustomer);
+  res.status(201).json({newCustomer});
 });
-
+app.put("/api/customers/:id",async (req,res)=>{
+    try{
+        const {id}=req.params;
+        const result=await Customer.findByIdAndUpdate(id,req.body,{new:true});
+        if(!result){
+            res.status(404).json({message:"customer not found"});
+        }
+        console.log(result);
+        res.json({message:"customer updated successfully"});
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+})
+app.delete("/api/customers/:id",async (req,res)=>{
+    const {id}=req.params;
+    const result=await Customer.deleteOne({_id:id});
+    if(result.deletedCount===0){
+        res.status(404).json({message:"customer not found"});
+    }
+res.json({message:"customer deleted successfully"});
+})
 const start = async () => {
   try {
     await mongoose.connect(connection);
