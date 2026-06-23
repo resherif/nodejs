@@ -1,0 +1,17 @@
+{
+  "name": "bookstoreapi",
+  "version": "1.0.0",
+  "description": "book store api",
+  "license": "ISC",
+  "author": "Reham sherif",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "dependencies": {
+    "espress": "^0.0.0",
+    "express": "^5.2.1",
+    "joi": "^18.1.2"
+  }
+}
